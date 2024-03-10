@@ -8,3 +8,4 @@ edition = "2021"
 [dependencies]
 rbx_binary = "0.7.4"
 rbx_dom_weak = "2.7.0"
+rbx_types = "1.8.0"

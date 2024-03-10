@@ -212,6 +212,7 @@ version = "0.1.0"
 dependencies = [
  "rbx_binary",
  "rbx_dom_weak",
+ "rbx_types",
 ]
 
 [[package]]

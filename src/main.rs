@@ -2,6 +2,11 @@ use std::env;
 use std::fs::File;
 use std::io::BufReader;
 use std::error::Error;
+
+
+fn print_type_of<T>(_: &T) {
+    println!("{}", std::any::type_name::<T>())
+}
   
 fn test(file_name : String) -> Result<(), Box<dyn Error>> {
 
@@ -10,14 +15,30 @@ fn test(file_name : String) -> Result<(), Box<dyn Error>> {
 
     let dom = rbx_binary::from_reader(input)?;
 
+    fn find_scripts(dom1 : rbx_dom_weak::WeakDom, parent : &rbx_dom_weak::Instance) {
+        for &referent in parent.children() {
+            let instance = dom1.get_by_ref(referent).unwrap();
+            println!("- {}", instance.name);
+    
+            find_scripts(dom1, instance);
+        }
+    }
+
     // rbx_binary always returns a DOM with a DataModel at the top level.
     // To get to the instances from our file, we need to go one level deeper.
 
-    println!("Root instances in file:");
-    for &referent in dom.root().children() {
-        let instance = dom.get_by_ref(referent).unwrap();
-        println!("- {}", instance.name);
-    }
+    print_type_of(&dom);
+
+    // for &referent in dom.root().children() {
+    //     let instance = dom.get_by_ref(referent).unwrap();
+    //     println!("- {}", instance.name);
+    //     print_type_of(&referent);
+    //     //find_scripts(instance.children());
+    // }
+
+    let root = dom.root();
+
+    find_scripts(dom, root);
 
     Ok(())
 }
