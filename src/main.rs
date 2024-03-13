@@ -7,7 +7,7 @@ use std::error::Error;
 fn print_type_of<T>(_: &T) {
     println!("{}", std::any::type_name::<T>())
 }
-  
+
 fn test(file_name : String) -> Result<(), Box<dyn Error>> {
 
     // Using buffered I/O is recommended with rbx_binary
@@ -15,11 +15,20 @@ fn test(file_name : String) -> Result<(), Box<dyn Error>> {
 
     let dom = rbx_binary::from_reader(input)?;
 
-    fn find_scripts(dom1 : rbx_dom_weak::WeakDom, parent : &rbx_dom_weak::Instance) {
+    fn find_scripts(dom1 : &rbx_dom_weak::WeakDom, parent : &rbx_dom_weak::Instance) {
         for &referent in parent.children() {
             let instance = dom1.get_by_ref(referent).unwrap();
             println!("- {}", instance.name);
-    
+
+            if instance.name == "Script" {
+
+                for (key, value) in &instance.properties {
+                    println!("  {}: {:?}", key, value);
+                }
+            }
+
+            println!();
+
             find_scripts(dom1, instance);
         }
     }
@@ -38,7 +47,7 @@ fn test(file_name : String) -> Result<(), Box<dyn Error>> {
 
     let root = dom.root();
 
-    find_scripts(dom, root);
+    find_scripts(&dom, root);
 
     Ok(())
 }
