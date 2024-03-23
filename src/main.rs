@@ -3,51 +3,57 @@ use std::fs::File;
 use std::io::BufReader;
 use std::error::Error;
 
-
 fn print_type_of<T>(_: &T) {
     println!("{}", std::any::type_name::<T>())
 }
 
 fn test(file_name : String) -> Result<(), Box<dyn Error>> {
-
     // Using buffered I/O is recommended with rbx_binary
     let input = BufReader::new(File::open(file_name)?);
 
-    let dom = rbx_binary::from_reader(input)?;
-
-    fn find_scripts(dom1 : &rbx_dom_weak::WeakDom, parent : &rbx_dom_weak::Instance) {
-        for &referent in parent.children() {
-            let instance = dom1.get_by_ref(referent).unwrap();
-            println!("- {}", instance.name);
-
-            if instance.name == "Script" {
-
-                for (key, value) in &instance.properties {
-                    println!("  {}: {:?}", key, value);
-                }
-            }
-
-            println!();
-
-            find_scripts(dom1, instance);
-        }
-    }
-
     // rbx_binary always returns a DOM with a DataModel at the top level.
     // To get to the instances from our file, we need to go one level deeper.
+    let mut dom = rbx_binary::from_reader(input)?;
+
+    let mut q: Queue<rbx_dom_weak::Instance> = queue![];
 
     print_type_of(&dom);
 
-    // for &referent in dom.root().children() {
-    //     let instance = dom.get_by_ref(referent).unwrap();
-    //     println!("- {}", instance.name);
-    //     print_type_of(&referent);
-    //     //find_scripts(instance.children());
+    let root = dom.root_mut();
+
+    for &referent in parent.children() {
+
+    }
+
+    // fn find_scripts(dom1 : &mut rbx_dom_weak::WeakDom, parent : &mut rbx_dom_weak::Instance) {
+    //     for &referent in parent.children() {
+    //         let instance = dom1.get_by_ref_mut(referent).unwrap();
+
+    //         instance.name = "test".to_string();
+
+    //         println!("- {}", instance.name);
+
+    //         if instance.class == "Script" || instance.class == "LocalScript" {
+
+    //             for (key, value) in &instance.properties {
+    //                 let source;
+    //                 if key == "Source" {
+    //                     source = value;
+    //                 }
+
+    //                 //println!("  {}: {:?}", key, value);
+    //             }
+    //             //println!(" ");
+    //         }
+
+    //         find_scripts(dom1, instance);
+
+    //     }
     // }
 
-    let root = dom.root();
 
-    find_scripts(&dom, root);
+
+    //find_scripts(&mut dom, root);
 
     Ok(())
 }
