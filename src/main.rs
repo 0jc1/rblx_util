@@ -10,7 +10,6 @@ fn print_type_of<T>(_: &T) {
 }
 
 fn test(file_name : String) -> Result<(), Box<dyn Error>> {
-
     let bool_val = false;
 
     // Using buffered I/O is recommended with rbx_binary
@@ -19,7 +18,6 @@ fn test(file_name : String) -> Result<(), Box<dyn Error>> {
     // rbx_binary always returns a DOM with a DataModel at the top level. To get to the instances from our file, we need to go one level deeper.
     let mut dom = rbx_binary::from_reader(input)?;
     let root = dom.root();
-
     let mut vec : Vec<Ref> = Vec::new();
 
     fn find_scripts(dom1 : &WeakDom, parent : &Instance, vec1 : &mut Vec<Ref>) {
@@ -47,7 +45,9 @@ fn test(file_name : String) -> Result<(), Box<dyn Error>> {
     // iterate over script referents and create new instance
     for referent in vec.iter() {
         let instance = dom.get_by_ref(*referent).unwrap();
-        let builder = InstanceBuilder::new(instance.class.clone()).add_properties(instance.properties.into_iter()).with_property("Source", "source");
+        let mut builder = InstanceBuilder::new(instance.class.clone()).with_properties(instance.properties.clone().into_iter());
+
+        builder.add_property("Source", String::from("source"));
 
         let new_ref = dom.insert(*referent, builder);
         //let new_instance = dom.get_by_ref(new_ref).unwrap();
