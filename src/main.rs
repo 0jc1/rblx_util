@@ -35,7 +35,6 @@ fn test(file_name : String) -> Result<(), Box<dyn Error>> {
     }
 
     print_type_of(&dom);
-
     find_scripts(&dom, root, &mut vec);
 
     if bool_val {
@@ -45,8 +44,8 @@ fn test(file_name : String) -> Result<(), Box<dyn Error>> {
     // iterate over script referents and create new instance
     for referent in vec.iter() {
         let instance = dom.get_by_ref(*referent).unwrap();
+        
         let mut builder = InstanceBuilder::new(instance.class.clone()).with_properties(instance.properties.clone().into_iter());
-
         builder.add_property("Source", String::from("source"));
 
         let new_ref = dom.insert(*referent, builder);
@@ -85,6 +84,5 @@ fn main() {
 
     // Extract the file name from the command-line arguments
     let file_name = &args[1];
-
     test(file_name.to_string()).expect("REASON");
 }
