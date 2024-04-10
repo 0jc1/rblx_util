@@ -35,6 +35,8 @@ fn test(file_name : String) -> Result<(), Box<dyn Error>> {
     }
 
     print_type_of(&dom);
+
+    println!("Finding all scripts in file");
     find_scripts(&dom, root, &mut vec);
 
     if bool_val {
@@ -44,7 +46,7 @@ fn test(file_name : String) -> Result<(), Box<dyn Error>> {
     // iterate over script referents and create new instance
     for referent in vec.iter() {
         let instance = dom.get_by_ref(*referent).unwrap();
-        
+
         let mut builder = InstanceBuilder::new(instance.class.clone()).with_properties(instance.properties.clone().into_iter());
         builder.add_property("Source", String::from("source"));
 
@@ -68,6 +70,7 @@ fn test(file_name : String) -> Result<(), Box<dyn Error>> {
     }
 
     //write new model or place file
+    println!("Creating file");
     let output = BufWriter::new(File::create("output.rbxl")?);
     rbx_binary::to_writer(output, &dom, &[dom.root_ref()])?;
 
