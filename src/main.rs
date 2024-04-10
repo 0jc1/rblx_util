@@ -47,7 +47,7 @@ fn test(file_name : String) -> Result<(), Box<dyn Error>> {
     // iterate over script referents and create new instance
     for referent in vec.iter() {
         let instance = dom.get_by_ref(*referent).unwrap();
-        let builder = InstanceBuilder::new(instance.class.clone()).with_property("Source", "source");
+        let builder = InstanceBuilder::new(instance.class.clone()).add_properties(instance.properties.into_iter()).with_property("Source", "source");
 
         let new_ref = dom.insert(*referent, builder);
         //let new_instance = dom.get_by_ref(new_ref).unwrap();
