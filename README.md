@@ -1,3 +1,2 @@
 # rblx_util
-
-Utility tool for Roblox studio files
+Utility tool for Roblox binary formats 
